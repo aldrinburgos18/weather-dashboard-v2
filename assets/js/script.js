@@ -48,9 +48,12 @@ var getWeatherData = function (lat, lon, city, country) {
 
 var displayWeatherData = function (weather, city, country) {
   //clear page
-  weatherContainer.innerHTML = "";
+  weatherContainer.textContent = "";
   titleLocation.innerHTML = `${city}, ${country}`;
-  for (var i = 1; i < weather.daily.length - 2; i++) {
+  for (var i = 0; i < weather.daily.length - 3; i++) {
+    //convert unix date to human readable date
+    var date = convertDate(weather.daily[i].dt).split(",");
+
     //convert wind deg to angle
     var windDirection = convertWind(weather.daily[i].wind_deg);
 
@@ -62,9 +65,14 @@ var displayWeatherData = function (weather, city, country) {
     weatherDivContainer.className = "col-md-2 card";
     weatherDivContainer.setAttribute("style", "width: 14rem;");
 
-    //create cards
+    //create card
     var weatherDiv = document.createElement("div");
     weatherDiv.className = "card-body";
+
+    //display day
+    var day = document.createElement("h6");
+    day.className = "card-subtitle mb-2 text-info";
+    day.textContent = date;
 
     //display icon
     var weatherIcon = document.createElement("img");
@@ -89,15 +97,24 @@ var displayWeatherData = function (weather, city, country) {
       weather.daily[i].temp.max
     )}°F | Low: ${Math.floor(weather.daily[i].temp.min)}°F<br /> Humidity: ${
       weather.daily[i].humidity
-    }<br />Wind: ${Math.floor(
+    }%<br />Wind: ${Math.floor(
       weather.daily[i].wind_speed
     )}MPH ${windDirection}`;
 
     //append to page
-    weatherDiv.append(weatherIcon, weatherTitle, weatherData, uvIndex);
+    weatherDiv.append(day, weatherIcon, weatherTitle, weatherData, uvIndex);
     weatherDivContainer.appendChild(weatherDiv);
     weatherContainer.appendChild(weatherDivContainer);
   }
+};
+
+var convertDate = function (unixDate) {
+  var milliseconds = unixDate * 1000;
+  var dateObject = new Date(milliseconds);
+  var humanDateFormat = dateObject.toLocaleString("en-US", {
+    weekday: "long",
+  });
+  return humanDateFormat;
 };
 
 var convertWind = function (wind) {
