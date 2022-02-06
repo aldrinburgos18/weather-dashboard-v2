@@ -16,73 +16,25 @@
             <div class="col-lg-6 mx-auto">
               <p class="lead-sm mb-5">Powered by OpenWeather API.</p>
               <div class="d-grid gap-2">
-                <form class="row justify-content-center" id="search-city"> 
+                <form class="row justify-content-center" id="search-city" autocomplete="off"> 
                     <div class="col-7 col-sm-4">
                         <input name="location" id="location" autofocus="true" class="form-control" type="text" placeholder="Enter a city...">
                     </div>
                     <div class="col-1">
                         <button type="submit" class="btn btn-info">Search!</button>
                     </div>
+                    <p class="text-light">Tip: Enter 2 letter country code for a more accurate result</p>
                 </form>
-
               </div>
             </div>
           </div>
     </header>
 
     <main>
-      <div class="container" id="weather-container">
-        <div class="row d-flex justify-content-center">
-          <div class="col-md-2 card" style="width: 18rem;">
-            <div class="card-body">
-              <img class="d-block mx-auto mb-1" src="./img/day.png" height="100" alt="Card image cap">
-              <h5 class="card-title text-center">Sunny</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Humidity: 50%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Precipitation: 1%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Wind: 5MPH W</h6>
-              <h6 class="card-subtitle mb-2 text-muted bg-warning">UV Index: 4</h6>
-            </div>
-          </div>
-          <div class="col-md-2 card" style="width: 18rem;">
-            <div class="card-body">
-              <img class="d-block mx-auto mb-1" src="./img/day.png" height="100" alt="Card image cap">
-              <h5 class="card-title text-center">Sunny</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Humidity: 50%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Precipitation: 1%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Wind: 5MPH W</h6>
-              <h6 class="card-subtitle mb-2 text-muted bg-warning">UV Index: 4</h6>
-            </div>
-          </div>
-          <div class="col-md-2 card" style="width: 18rem;">
-            <div class="card-body">
-              <img class="d-block mx-auto mb-1" src="./img/day.png" height="100" alt="Card image cap">
-              <h5 class="card-title text-center">Sunny</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Humidity: 50%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Precipitation: 1%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Wind: 5MPH W</h6>
-              <h6 class="card-subtitle mb-2 text-muted bg-warning">UV Index: 4</h6>
-            </div>
-          </div>
-          <div class="col-md-2 card" style="width: 18rem;">
-            <div class="card-body">
-              <img class="d-block mx-auto mb-1" src="./img/day.png" height="100" alt="Card image cap">
-              <h5 class="card-title text-center">Sunny</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Humidity: 50%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Precipitation: 1%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Wind: 5MPH W</h6>
-              <h6 class="card-subtitle mb-2 text-muted bg-warning">UV Index: 4</h6>
-            </div>
-          </div>
-          <div class="col-md-2 card" style="width: 18rem;">
-            <div class="card-body">
-              <img class="d-block mx-auto mb-1" src="./img/day.png" height="100" alt="Card image cap">
-              <h5 class="card-title text-center">Sunny</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Humidity: 50%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Precipitation: 1%</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Wind: 5MPH W</h6>
-              <h6 class="card-subtitle mb-2 text-muted bg-warning">UV Index: 4</h6>
-            </div>
-          </div>
+      
+      <div class="container">
+        <h2 class="text-center">Showing 5 Day Forecast for: <span id="title-location"></span></h2>
+        <div class="row d-flex justify-content-center" id="weather-container">
         </div>
         </div>
     </main>
