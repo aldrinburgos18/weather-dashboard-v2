@@ -1,44 +1,15 @@
 var apiKey = "a1d8b8f684383df9eff3ae909b0d743e";
 var geocodingUrl = "http://api.openweathermap.org/geo/1.0/direct?q=";
 var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?";
-var imperialUnits;
+var imperialUnits = [{ unit: "imperial" }];
+var metricUnits = [{ unit: "metric" }];
 
 var convertUnitEl = document.querySelector("#units");
-var searchInput = document.querySelector("#location");
-var userForm = document.querySelector("#search-city");
-var weatherContainer = document.querySelector("#weather-container");
-var title = document.querySelector("#title");
-var titleLocation = document.querySelector("#title-location");
-
-var formSubmitHandler = function (event) {
-  event.preventDefault();
-
-  //get value from input element
-  var location = searchInput.value.trim();
-  getCoordinates(location);
-};
-
-var getCoordinates = function (loc) {
-  fetch(geocodingUrl + loc + "&limit=1&appid=" + apiKey).then(function (
-    response
-  ) {
-    response.json().then(function (coord) {
-      if (coord.length === 0) {
-        alert("Please enter a valid city.");
-      } else {
-        //get data from first index
-        var latitude = coord[0].lat;
-        var longitude = coord[0].lon;
-        var country = coord[0].country;
-        if (coord[0].state) {
-          var state = coord[0].state;
-        }
-        var city = coord[0].name;
-        getWeatherData(latitude, longitude, city, country, state);
-      }
-    });
-  });
-};
+var searchInputEl = document.querySelector("#location");
+var userFormEl = document.querySelector("#search-city");
+var weatherContainerEl = document.querySelector("#weather-container");
+var titleEl = document.querySelector("#title");
+var titleLocationEl = document.querySelector("#title-location");
 
 var getWeatherData = function (lat, lon, city, country, state) {
   fetch(
@@ -51,105 +22,110 @@ var getWeatherData = function (lat, lon, city, country, state) {
       apiKey
   ).then(function (response) {
     response.json().then(function (weather) {
-      displayWeatherData(weather, city, country, state);
+      saveWeatherData(weather, city, country, state);
     });
   });
 };
 
-var displayWeatherData = function (weather, city, country, state) {
-  //clear page
-  weatherContainer.textContent = "";
-  title.classList.remove("invisible");
-  if (state) {
-    titleLocation.innerHTML = `${city}, ${state}`;
-  } else {
-    titleLocation.innerHTML = `${city}, ${country}`;
-  }
+var saveWeatherData = function (weather, city, country, state) {
+  //reset array every time function runs
+  imperialUnits = [{ unit: "imperial" }];
+  metricUnits = [{ unit: "metric" }];
   for (var i = 1; i < weather.daily.length - 2; i++) {
-    //convert unix date to human readable date
-    var date = convertDate(weather.daily[i].dt).split(",");
+    var day = convertDate(weather.daily[i].dt);
+    imperialUnits.push({
+      city: city,
+      country: country,
+      state: state,
+      date: day,
+      icon: weather.daily[i].weather[0].icon,
+      desc: weather.daily[i].weather[0].main,
+      humidity: weather.daily[i].humidity,
+      windDir: convertWind(weather.daily[i].wind_deg),
+      uv: weather.daily[i].uvi,
+      tempLow: Math.floor(weather.daily[i].temp.min) + "°F",
+      tempHigh: Math.floor(weather.daily[i].temp.max) + "°F",
+      windSpeed: Math.floor(weather.daily[i].wind_speed) + "MPH",
+    });
+    metricUnits.push({
+      city: city,
+      country: country,
+      state: state,
+      date: day,
+      icon: weather.daily[i].weather[0].icon,
+      desc: weather.daily[i].weather[0].main,
+      humidity: weather.daily[i].humidity,
+      windDir: convertWind(weather.daily[i].wind_deg),
+      uv: weather.daily[i].uvi,
+      tempLow: Math.floor((weather.daily[i].temp.min - 32) * 0.5556) + "°C",
+      tempHigh: Math.floor((weather.daily[i].temp.max - 32) * 0.5556) + "°C",
+      windSpeed: Math.floor(weather.daily[i].wind_speed * 1.609344) + "MPH",
+    });
+  }
+  checkUnit();
+};
 
-    // audit uv index
-    var uvIndex = auditUVIndex(weather.daily[i].uvi);
+var switchUnit = function () {
+  var card = weatherContainerEl.querySelector(".card");
+  //check if page has content
+  if (card) {
+    checkUnit();
+  } else {
+    //NOOP
+  }
+};
 
-    //create container
-    var weatherDivContainer = document.createElement("div");
-    weatherDivContainer.className = "col-md-2 card";
-    weatherDivContainer.setAttribute("style", "width: 14rem;");
+var checkUnit = function () {
+  //if checked, display metric
+  if (convertUnitEl.checked) {
+    displayWeatherData(metricUnits);
+  } else {
+    displayWeatherData(imperialUnits);
+  }
+};
 
-    //create card
-    var weatherDiv = document.createElement("div");
-    weatherDiv.className = "card-body";
+var displayWeatherData = function (weatherData) {
+  titleLocationEl.textContent = "";
+  titleEl.classList.remove("invisible");
+  weatherContainerEl.textContent = "";
+  if (weatherData[1].state) {
+    titleLocationEl.textContent = `${weatherData[1].city}, ${weatherData[1].state}`;
+  } else {
+    titleLocationEl.textContent = `${weatherData[1].city}, ${weatherData[1].country}`;
+  }
 
+  for (var i = 1; i < weatherData.length; i++) {
+    var cardContainer = document.createElement("div");
+    cardContainer.className = "col-md-2 card";
+    cardContainer.setAttribute("style", "width: 14rem;");
+    var weatherCard = document.createElement("div");
+    weatherCard.className = "card-body";
     //display day
     var day = document.createElement("h6");
     day.className = "card-subtitle mb-2 text-info";
-    day.textContent = date;
-
+    day.textContent = weatherData[i].date;
     //display icon
     var weatherIcon = document.createElement("img");
     weatherIcon.className = "d-block mx-auto mb-1";
     weatherIcon.setAttribute(
       "src",
-      "http://openweathermap.org/img/wn/" +
-        weather.daily[i].weather[0].icon +
-        ".png"
+      `http://openweathermap.org/img/wn/${weatherData[i].icon}.png`
     );
     weatherIcon.setAttribute("height", "100");
-
     //display weather title
     var weatherTitle = document.createElement("h5");
     weatherTitle.className = "card-title text-center";
-    weatherTitle.innerText = weather.daily[i].weather[0].main;
-
-    var tempLow = Math.floor(weather.daily[i].temp.min);
-    var tempHigh = Math.floor(weather.daily[i].temp.max);
-    var humidity = weather.daily[i].humidity;
-    var windSpeed = Math.floor(Math.floor(weather.daily[i].wind_speed));
-    //convert wind deg to angle
-    var windDirection = convertWind(weather.daily[i].wind_deg);
-    if (convertUnitEl.checked) {
-      var data = displayMetric(
-        tempLow,
-        tempHigh,
-        humidity,
-        windSpeed,
-        windDirection
-      );
-    } else {
-      var data = displayImperial(
-        tempLow,
-        tempHigh,
-        humidity,
-        windSpeed,
-        windDirection
-      );
-    }
-
-    //display data
+    weatherTitle.innerText = weatherData[i].desc;
+    var data = document.createElement("h6");
+    data.className = "card-subtitle mb-2 text-muted";
+    // audit uv index
+    var uvIndex = auditUVIndex(weatherData[i].uv);
+    data.innerHTML = `Low: ${weatherData[i].tempLow} | High: ${weatherData[i].tempHigh}<br />Humidity: ${weatherData[i].humidity}%<br />Wind: ${weatherData[i].windSpeed} ${weatherData[i].windDir}`;
     //append to page
-    weatherDiv.append(day, weatherIcon, data, weatherTitle, uvIndex);
-    weatherDivContainer.appendChild(weatherDiv);
-    weatherContainer.appendChild(weatherDivContainer);
+    weatherCard.append(day, weatherIcon, data, uvIndex);
+    cardContainer.appendChild(weatherCard);
+    weatherContainerEl.appendChild(cardContainer);
   }
-};
-
-var displayImperial = function (low, high, humidity, windSpeed, windDirection) {
-  var weatherData = document.createElement("h6");
-  weatherData.className = "card-subtitle mb-2 text-muted";
-  weatherData.innerHTML = `Low: ${low}°F | High: ${high}°F<br /> Humidity: ${humidity}%<br />Wind: ${windSpeed}MPH ${windDirection}`;
-  console.log(weatherData);
-  return weatherData;
-};
-
-var displayMetric = function (low, high, humidity, windSpeed, windDirection) {
-  var metricLow = Math.floor((low - 32) * 0.5556);
-  var metricHigh = Math.floor((high - 32) * 0.5556);
-  var metricSpeed = Math.floor(windSpeed * 1.609344);
-  var weatherData = document.createElement("h6");
-  weatherData.className = "card-subtitle mb-2 text-muted";
-  weatherData.innerHTML = `Low: ${metricLow}°C | High: ${metricHigh}°C<br /> Humidity: ${humidity}%<br />Wind: ${metricSpeed}KPH ${windDirection}`;
-  return weatherData;
 };
 
 var convertDate = function (unixDate) {
@@ -182,30 +158,35 @@ var auditUVIndex = function (uvIndex) {
   return uvIndexEl;
 };
 
-var convertUnit = function () {
-  var card = weatherContainer.querySelector(".card");
-  imperialUnits = weatherContainer.innerHTML;
-  //metric
-  if (convertUnitEl.checked) {
-    //check if page has content
-    if (card) {
-      console.log("container has content");
-      weatherContainer.innerHTML = "";
-      weatherContainer.innerHTML = "display celsius";
-    } else {
-      //NOOP
-    }
-  }
-  //imperial
-  else {
-    if (card) {
-      weatherContainer.innerHTML = "";
-      weatherContainer.innerHTML = `${imperialUnits}`;
-    } else {
-      //NOOP
-    }
-  }
+var formSubmitHandler = function (event) {
+  event.preventDefault();
+
+  //get value from input element
+  var location = searchInputEl.value.trim();
+  getCoordinates(location);
 };
 
-convertUnitEl.addEventListener("click", convertUnit);
-userForm.addEventListener("submit", formSubmitHandler);
+var getCoordinates = function (loc) {
+  fetch(geocodingUrl + loc + "&limit=1&appid=" + apiKey).then(function (
+    response
+  ) {
+    response.json().then(function (coord) {
+      if (coord.length === 0) {
+        alert("Please enter a valid city.");
+      } else {
+        //get data from first index
+        var latitude = coord[0].lat;
+        var longitude = coord[0].lon;
+        var country = coord[0].country;
+        if (coord[0].state) {
+          var state = coord[0].state;
+        }
+        var city = coord[0].name;
+        getWeatherData(latitude, longitude, city, country, state);
+      }
+    });
+  });
+};
+
+convertUnitEl.addEventListener("click", switchUnit);
+userFormEl.addEventListener("submit", formSubmitHandler);
