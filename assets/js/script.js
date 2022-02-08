@@ -10,6 +10,7 @@ var userFormEl = document.querySelector("#search-city");
 var weatherContainerEl = document.querySelector("#weather-container");
 var titleEl = document.querySelector("#title");
 var titleLocationEl = document.querySelector("#title-location");
+var footerEl = document.querySelector("footer");
 
 var getWeatherData = function (lat, lon, city, country, state) {
   fetch(
@@ -33,7 +34,7 @@ var saveWeatherData = function (weather, city, country, state) {
   metricUnits = [{ unit: "metric" }];
   for (var i = 1; i < weather.daily.length - 2; i++) {
     var day = convertDate(weather.daily[i].dt);
-    imperialUnits.push({
+    var data = {
       city: city,
       country: country,
       state: state,
@@ -43,23 +44,18 @@ var saveWeatherData = function (weather, city, country, state) {
       humidity: weather.daily[i].humidity,
       windDir: convertWind(weather.daily[i].wind_deg),
       uv: weather.daily[i].uvi,
+    };
+    imperialUnits.push({
       tempLow: Math.floor(weather.daily[i].temp.min) + "°F",
       tempHigh: Math.floor(weather.daily[i].temp.max) + "°F",
       windSpeed: Math.floor(weather.daily[i].wind_speed) + "MPH",
+      data,
     });
     metricUnits.push({
-      city: city,
-      country: country,
-      state: state,
-      date: day,
-      icon: weather.daily[i].weather[0].icon,
-      desc: weather.daily[i].weather[0].main,
-      humidity: weather.daily[i].humidity,
-      windDir: convertWind(weather.daily[i].wind_deg),
-      uv: weather.daily[i].uvi,
       tempLow: Math.floor((weather.daily[i].temp.min - 32) * 0.5556) + "°C",
       tempHigh: Math.floor((weather.daily[i].temp.max - 32) * 0.5556) + "°C",
       windSpeed: Math.floor(weather.daily[i].wind_speed * 1.609344) + "MPH",
+      data,
     });
   }
   checkUnit();
@@ -88,39 +84,39 @@ var displayWeatherData = function (weatherData) {
   titleLocationEl.textContent = "";
   titleEl.classList.remove("invisible");
   weatherContainerEl.textContent = "";
-  if (weatherData[1].state) {
-    titleLocationEl.textContent = `${weatherData[1].city}, ${weatherData[1].state}`;
+  if (weatherData[1].data.state) {
+    titleLocationEl.textContent = `${weatherData[1].data.city}, ${weatherData[1].data.state}`;
   } else {
-    titleLocationEl.textContent = `${weatherData[1].city}, ${weatherData[1].country}`;
+    titleLocationEl.textContent = `${weatherData[1].data.city}, ${weatherData[1].data.country}`;
   }
 
   for (var i = 1; i < weatherData.length; i++) {
     var cardContainer = document.createElement("div");
-    cardContainer.className = "col-md-2 card";
+    cardContainer.className = "col-sm-12 col-md-2 card";
     cardContainer.setAttribute("style", "width: 14rem;");
     var weatherCard = document.createElement("div");
     weatherCard.className = "card-body";
     //display day
     var day = document.createElement("h6");
-    day.className = "card-subtitle mb-2 text-info";
-    day.textContent = weatherData[i].date;
+    day.className = "card-subtitle mb-2 card-text";
+    day.textContent = weatherData[i].data.date;
     //display icon
     var weatherIcon = document.createElement("img");
     weatherIcon.className = "d-block mx-auto mb-1";
     weatherIcon.setAttribute(
       "src",
-      `http://openweathermap.org/img/wn/${weatherData[i].icon}.png`
+      `http://openweathermap.org/img/wn/${weatherData[i].data.icon}.png`
     );
     weatherIcon.setAttribute("height", "100");
     //display weather title
     var weatherTitle = document.createElement("h5");
     weatherTitle.className = "card-title text-center";
-    weatherTitle.innerText = weatherData[i].desc;
+    weatherTitle.innerText = weatherData[i].data.desc;
     var data = document.createElement("h6");
-    data.className = "card-subtitle mb-2 text-muted";
+    data.className = "card-subtitle mb-2 card-text";
     // audit uv index
-    var uvIndex = auditUVIndex(weatherData[i].uv);
-    data.innerHTML = `Low: ${weatherData[i].tempLow} | High: ${weatherData[i].tempHigh}<br />Humidity: ${weatherData[i].humidity}%<br />Wind: ${weatherData[i].windSpeed} ${weatherData[i].windDir}`;
+    var uvIndex = auditUVIndex(weatherData[i].data.uv);
+    data.innerHTML = `Low: ${weatherData[i].tempLow} | High: ${weatherData[i].tempHigh}<br />Humidity: ${weatherData[i].data.humidity}%<br />Wind: ${weatherData[i].windSpeed} ${weatherData[i].data.windDir}`;
     //append to page
     weatherCard.append(day, weatherIcon, data, uvIndex);
     cardContainer.appendChild(weatherCard);
@@ -145,14 +141,14 @@ var convertWind = function (wind) {
 
 var auditUVIndex = function (uvIndex) {
   var uvIndexEl = document.createElement("h6");
-  if (uvIndex <= 2) {
-    uvIndexEl.className = "card-subtitle mb-2 text-muted bg-success";
+  if (uvIndex <= 3) {
+    uvIndexEl.className = "card-subtitle mb-2 uv-low";
     uvIndexEl.innerHTML = `UV Index: ${uvIndex}`;
   } else if (uvIndex <= 7) {
-    uvIndexEl.className = "card-subtitle mb-2 text-muted bg-warning";
+    uvIndexEl.className = "card-subtitle mb-2 uv-med";
     uvIndexEl.innerHTML = `UV Index: ${uvIndex}`;
   } else {
-    uvIndexEl.className = "card-subtitle mb-2 text-muted bg-danger";
+    uvIndexEl.className = "card-subtitle mb-2 uv-high";
     uvIndexEl.innerHTML = `UV Index: ${uvIndex}`;
   }
   return uvIndexEl;
@@ -187,6 +183,5 @@ var getCoordinates = function (loc) {
     });
   });
 };
-
 convertUnitEl.addEventListener("click", switchUnit);
 userFormEl.addEventListener("submit", formSubmitHandler);

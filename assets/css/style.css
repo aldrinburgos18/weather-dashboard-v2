@@ -1,12 +1,74 @@
+html,
+body {
+  background-color: #abaed3;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.hero {
+  background-image: linear-gradient(#748cf1 0%, #abaed3 100%);
+}
+
+.btn {
+  border: #24142c;
+  background-color: #24142c;
+  color: white;
+}
+
+.navbar,
+footer {
+  background-color: #24142c;
+}
+
 .col-md-2 {
   margin-right: 1%;
   margin-top: 1%;
+}
+
+.card {
+  background-color: #5d416a;
+}
+
+.card-text {
+  color: #24142c;
+}
+
+.holder {
+  width: 95%;
+}
+
+.uv-low {
+  color: #ffb54b;
+}
+
+.uv-med {
+  color: #da680e;
+}
+
+.uv-high {
+  color: #cc5500;
+}
+
+.container {
+  max-width: 90%;
+  height: 100%;
 }
 
 #weather-container {
   padding-top: 1%;
 }
 
-.holder {
-  width: 95%;
+footer a,
+footer a:hover {
+  text-decoration: none;
+  color: white;
 }

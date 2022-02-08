@@ -10,7 +10,7 @@
 </head>
 <body>
     <header class="hero">
-      <div class="navbar navbar-dark bg-dark position-sticky">
+      <div class="navbar">
         <div class="holder">
         <div class="form-check form-switch float-end">
           <input class="form-check-input" type="checkbox" id="units">
@@ -19,11 +19,11 @@
         </div>
         </div>
       </div>
-        <div class="px-4 py-5 text-center bg-info">
+        <div class="px-4 py-5 text-center hero">
             <img class="d-block mx-auto mb-1" src="./assets/img/weather-dashboard.svg" height="70">
             <h1 class="display-5 fw-bold mb-0">Weather Dashboard</h1>
             <div class="col-lg-6 mx-auto">
-              <p class="lead-sm mb-5">Powered by OpenWeather API.</p>
+              <p class="lead-sm mb-5 text-muted">Powered by OpenWeather API.</p>
               <div class="d-grid gap-2">
                 <form class="row justify-content-center" id="search-city" autocomplete="off"> 
                     <div class="input-group mb-3">
@@ -38,12 +38,18 @@
     </header>
 
     <main>  
-      <div class="container">
-        <h2 class="text-center invisible" id="title">Showing 5 Day Forecast for: <span id="title-location"></span></h2>
+      <div class="container pb-3">
+        <h2 class="text-center invisible" id="title">5 Day Forecast for: <span id="title-location"></span></h2>
         <div class="row d-flex justify-content-center" id="weather-container">
         </div>
         </div>
     </main>
+
+    <footer id="sticky-footer" class="flex-shrink-0 py-1 text-white-50">
+      <div class="container text-center">
+        <small>&copy; <a href="https://github.com/aldrinburgos18" target="_blank">aldrin burgos</a></small>
+      </div>
+    </footer>
     <script src="./assets/js/script.js"></script>
 </body>
 </html>
