@@ -1,5 +1,5 @@
 var apiKey = "a1d8b8f684383df9eff3ae909b0d743e";
-var geocodingUrl = "http://api.openweathermap.org/geo/1.0/direct?q=";
+var geocodingUrl = "https://api.openweathermap.org/geo/1.0/direct?q=";
 var weatherUrl = "https://api.openweathermap.org/data/2.5/onecall?";
 var imperialUnits = [{ unit: "imperial" }];
 var metricUnits = [{ unit: "metric" }];
