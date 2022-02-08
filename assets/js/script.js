@@ -105,7 +105,7 @@ var displayWeatherData = function (weatherData) {
     weatherIcon.className = "d-block mx-auto mb-1";
     weatherIcon.setAttribute(
       "src",
-      `http://openweathermap.org/img/wn/${weatherData[i].data.icon}.png`
+      `https://openweathermap.org/img/wn/${weatherData[i].data.icon}.png`
     );
     weatherIcon.setAttribute("height", "100");
     //display weather title
