@@ -85,7 +85,7 @@ var displayWeatherData = function (weatherData) {
   titleEl.classList.remove("invisible");
   weatherContainerEl.textContent = "";
   if (weatherData[1].data.state) {
-    titleLocationEl.textContent = `${weatherData[1].data.city}, ${weatherData[1].data.state}`;
+    titleLocationEl.textContent = `${weatherData[1].data.city}, ${weatherData[1].data.state}, ${weatherData[1].data.country}`;
   } else {
     titleLocationEl.textContent = `${weatherData[1].data.city}, ${weatherData[1].data.country}`;
   }
