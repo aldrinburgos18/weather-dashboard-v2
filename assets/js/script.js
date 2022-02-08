@@ -58,6 +58,7 @@ var saveWeatherData = function (weather, city, country, state) {
       data,
     });
   }
+  console.log(metricUnits, imperialUnits);
   checkUnit();
 };
 
