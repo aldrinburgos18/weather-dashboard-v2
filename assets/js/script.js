@@ -54,7 +54,7 @@ var saveWeatherData = function (weather, city, country, state) {
     metricUnits.push({
       tempLow: Math.floor((weather.daily[i].temp.min - 32) * 0.5556) + "°C",
       tempHigh: Math.floor((weather.daily[i].temp.max - 32) * 0.5556) + "°C",
-      windSpeed: Math.floor(weather.daily[i].wind_speed * 1.609344) + "MPH",
+      windSpeed: Math.floor(weather.daily[i].wind_speed * 1.609344) + "KPH",
       data,
     });
   }
